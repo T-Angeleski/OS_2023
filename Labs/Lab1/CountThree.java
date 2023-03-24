@@ -1,28 +1,35 @@
 package Labs.Lab1;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Random;
+import java.util.Scanner;
 import java.util.concurrent.Semaphore;
 
 public class CountThree {
 
-    static int count = 0;
-    static Semaphore semaphore = new Semaphore(1);
+    public static int NUM_RUNS = 100;
 
+    static int count = 0;
+
+    static Semaphore semaphore = new Semaphore(1);
 
     public void init() {
     }
 
     class Counter extends Thread {
 
-        public void count(int[] data) throws InterruptedException {
+        public static void count(int[] data) throws InterruptedException {
 
-            semaphore.acquire();
+            semaphore.acquire();  // Critical region, use binary semaphore
+            // Print array
+            Arrays.stream(data).forEach(i -> System.out.print(i + " "));
+            System.out.println();
 
-            int counter = 0;
-            for(int i = 0 ; i < data.length ; i++) {
-                if (data[i] == 3) counter++;
-            }
+            // Get count of 3s in array
+            int counter = (int) Arrays.stream(data).filter(i -> i == 3).count();
             count += counter;
+
             semaphore.release();
         }
 
@@ -55,25 +62,22 @@ public class CountThree {
 
         init();
 
-        HashSet<Thread> threads = new HashSet<Thread>();
-
-        int[] numbers = new int[1000];
+        HashSet<Thread> threads = new HashSet<>();
+        Scanner s = new Scanner(System.in);
+        int total = s.nextInt();
         Random random = new Random();
-//        for (int i = 0; i < 1000; i++)
-//            numbers.add(random.nextInt(10));
-        for(int i = 0 ; i < 1000 ; i++) {
-            if(i <=500) {
-                numbers[i] = 2;
-            } else {
-                numbers[i] = 3;
+
+        for (int i = 0; i < NUM_RUNS; i++) {
+            // Fragment array with total/num runs
+            int[] data = new int[total / NUM_RUNS];
+
+            for (int j = 0; j < (total / NUM_RUNS); j++) {
+                data[j] = random.nextInt(10); // Get random number from 1/10
             }
-        }
 
-        for (int i = 0; i < 4; i++) {
-            
-            threads.add(new Counter(numbers));
+            Counter c = new Counter(data);
+            threads.add(c);
         }
-
 
         for (Thread t : threads) {
             t.start();
@@ -83,8 +87,8 @@ public class CountThree {
             t.join();
         }
 
-        System.out.printf("For array %s\n There are %d 3's",
-                Arrays.toString(numbers), count);
+        System.out.println(count);
+
 
     }
 }
