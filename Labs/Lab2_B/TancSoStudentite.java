@@ -9,18 +9,17 @@ import java.util.concurrent.Semaphore;
 public class TancSoStudentite {
 
     //TODO: Definicija na globalni promenlivi i semafori
-    static Semaphore inWardrobe; // 10 max
-    static Semaphore malesDancing; // 3 pairs
-    static Semaphore femalesDancing;
-    static Semaphore femaleHere; // megju-procesna komunikacija
+    static Semaphore inWardrobe;  // max 10 in wardrobe
+    static Semaphore malePartner; // 3 pairs male/female
+    static Semaphore femalePartner;
+    static Semaphore femaleHere; // process communication
     static Semaphore maleReady;
 
     public void init() {
-
         //TODO: da se implementira
         inWardrobe = new Semaphore(10);
-        malesDancing = new Semaphore(3);
-        femalesDancing = new Semaphore(3);
+        malePartner = new Semaphore(3);
+        femalePartner = new Semaphore(3);
         femaleHere = new Semaphore(0);
         maleReady = new Semaphore(0);
     }
@@ -37,16 +36,12 @@ public class TancSoStudentite {
             inWardrobe.acquire();
             show.presobleci();
             inWardrobe.release();
-
             // samo maskoto go povikuva metodot tancuvaj
-
             femaleHere.acquire();
             maleReady.release();
-
-            malesDancing.acquire();
+            malePartner.acquire();
             show.tancuvaj();
-            malesDancing.release();
-
+            malePartner.release();
         }
 
 
@@ -94,16 +89,15 @@ public class TancSoStudentite {
         public void ucestvo() throws InterruptedException {
 
             //TODO: da se implementira
-
             inWardrobe.acquire();
             show.presobleci();
             inWardrobe.release();
 
             femaleHere.release();
             maleReady.acquire();
-            femalesDancing.acquire();
-            femalesDancing.release();
 
+            femalePartner.acquire();
+            femalePartner.release();
         }
 
 
