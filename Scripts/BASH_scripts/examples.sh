@@ -54,5 +54,5 @@ done
 
 
 # Don't close
-trap 'sleep infinity' EXIT
+#trap 'sleep infinity' EXIT
 
