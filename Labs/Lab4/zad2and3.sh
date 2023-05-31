@@ -15,8 +15,13 @@ filesSource=$(ls $FROM | grep '^[A-Z]*\.csv')
 
 for f in $filesSource
 do
-    mv $FROM/$f $TO
+    nameNoExt=$(echo $f | awk -F. '{print $1}')
+    newName="$nameNoExt.moved_csv"
+
+    mv $FROM/$f $newName  # Rename
+    mv $newName $TO  # Move
 done
+
 
 # Zadacha 3
 totalSize=0
